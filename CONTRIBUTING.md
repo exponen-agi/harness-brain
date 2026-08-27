@@ -29,6 +29,29 @@ git clone https://github.com/cloudbloqavi/harness-brain.git
 cd harness-brain
 ```
 
+Before opening a PR that touches `projects/`, check your entry is well-formed
+with the validation script (plain Node, no install needed — works the same on
+Linux, macOS, and Windows as long as you have
+[Node.js](https://nodejs.org) 18+ on your `PATH`):
+
+```bash
+node scripts/validate-entries.mjs
+```
+
+It checks that every detailed log has the required `What changed` / `Why` /
+`Files` fields and that every compact rollup's `## <project>` blocks match
+real repo folders. CI runs the same script on every PR.
+
+```mermaid
+flowchart LR
+    A["projects/brain-N/"] --> B{"For each *-HAR.md"}
+    B -->|"has What changed / Why / Files?"| C["✅ pass"]
+    B -->|"missing a field"| D["❌ fail: which field, which file"]
+    A --> E{"For each *-HAR-compact.md"}
+    E -->|"heading + ## blocks match real repo folders?"| C
+    E -->|"stale/misnamed project block"| D
+```
+
 ## The rules every file in this repo follows
 
 Keep new content consistent with these, so the templates and the agents that
@@ -46,7 +69,9 @@ read/write them keep working:
    why, files touched, cross-repo impact, flags.
 5. **Exactly one compact rollup per brain**, at the brain's root:
    `<brain>/<YY-MM-DD>-HAR-compact.md`, one short block per repo in that brain.
-   Follow [`_templates/YY-MM-DD-HAR-compact.md`](_templates/YY-MM-DD-HAR-compact.md).
+   Follow [`_templates/YY-MM-DD-HAR-compact.md`](_templates/YY-MM-DD-HAR-compact.md),
+   including its heading shape: `<brain> (<product-or-repo-name>) —
+   compact — <YY-MM-DD>`, e.g. `brain-1 (Ledger) — compact — 26-06-07`.
 6. **Every brain and every repo folder has a `README.md`** — a short index,
    not a copy of the detailed log.
 

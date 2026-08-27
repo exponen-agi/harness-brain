@@ -81,3 +81,14 @@ jobs:
             fi
           done
           exit $bad
+
+  validate-entries:
+    name: validate entry content
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Check required fields and cross-references
+        run: node scripts/validate-entries.mjs
