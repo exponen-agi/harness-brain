@@ -89,6 +89,11 @@ function extractFieldValue(section, field) {
  */
 export function validateDetailedLogContent(text) {
   const issues = [];
+  // Normalize CRLF up front: a Windows checkout (git's default
+  // core.autocrlf) hands this function "\r\n" line endings, and a stray
+  // trailing "\r" on a heading line is enough to break the SHA/date regexes
+  // below (JS's `.` excludes line terminators, "\r" included).
+  text = text.replace(/\r\n/g, "\n");
   const sections = text.split(/^## /m).slice(1); // drop the H1 preamble
   if (sections.length === 0) {
     issues.push("no '## <sha> — <subject>' commit sections found");
@@ -132,6 +137,8 @@ export function validateDetailedLogContent(text) {
  */
 export function validateCompactRollupContent(text, realRepoFolders) {
   const issues = [];
+  // Same CRLF normalization as validateDetailedLogContent — see its comment.
+  text = text.replace(/\r\n/g, "\n");
   const firstLine = text.split("\n", 1)[0];
   const headingMatch = COMPACT_HEADING.exec(firstLine);
   if (!headingMatch) {

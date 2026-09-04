@@ -43,6 +43,13 @@ test("validateDetailedLogContent passes a well-formed entry", () => {
   assert.deepEqual(validateDetailedLogContent(validEntry), []);
 });
 
+test("validateDetailedLogContent passes a well-formed entry with CRLF line endings", () => {
+  // A Windows checkout (git's default core.autocrlf) hands this function
+  // "\r\n" line endings — a real entry must not fail validation just
+  // because of which OS checked it out.
+  assert.deepEqual(validateDetailedLogContent(validEntry.replace(/\n/g, "\r\n")), []);
+});
+
 test("validateDetailedLogContent flags a missing field", () => {
   const text = validEntry.replace(/\*\*Files:\*\*.*\n?/, "");
   const issues = validateDetailedLogContent(text);
@@ -83,6 +90,14 @@ const validRollup = `# brain-1 (Ledger) — compact — 26-06-07
 
 test("validateCompactRollupContent passes when every real folder has a block", () => {
   const issues = validateCompactRollupContent(validRollup, ["ledger-api", "ledger-web"]);
+  assert.deepEqual(issues, []);
+});
+
+test("validateCompactRollupContent passes a well-formed rollup with CRLF line endings", () => {
+  const issues = validateCompactRollupContent(
+    validRollup.replace(/\n/g, "\r\n"),
+    ["ledger-api", "ledger-web"],
+  );
   assert.deepEqual(issues, []);
 });
 
