@@ -35,12 +35,22 @@ Linux, macOS, and Windows as long as you have
 [Node.js](https://nodejs.org) 18+ on your `PATH`):
 
 ```bash
-node scripts/validate-entries.mjs
+npm run validate
 ```
 
 It checks that every detailed log has the required `What changed` / `Why` /
-`Files` fields and that every compact rollup's `## <project>` blocks match
-real repo folders. CI runs the same script on every PR.
+`Files` fields **with real content** (not blank, not a leftover "TBD"), that
+every commit heading starts with a real-looking short SHA, that every
+`YY-MM-DD` date is an actual calendar date, and that every compact rollup's
+`## <project>` blocks match real repo folders **in both directions** — a
+stale block with no matching folder, and a folder with no block, are both
+flagged. CI runs the same script on every PR, on Linux, macOS, and Windows.
+
+If you change `scripts/validate-entries.mjs` itself, run its unit tests too:
+
+```bash
+npm test
+```
 
 ```mermaid
 flowchart LR
