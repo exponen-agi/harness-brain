@@ -1,0 +1,14 @@
+{
+  "name": "harness-brain",
+  "private": true,
+  "description": "A plain-Markdown, git-backed memory ledger that Harness Stack's commit-brain-agent writes to on every commit.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "validate": "node scripts/validate-entries.mjs",
+    "test": "node --test scripts/*.test.mjs"
+  }
+}

@@ -84,11 +84,17 @@ jobs:
 
   validate-entries:
     name: validate entry content
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version: 22.x
+      - name: Unit-test the validator's pure functions
+        run: npm test
       - name: Check required fields and cross-references
-        run: node scripts/validate-entries.mjs
+        run: npm run validate
