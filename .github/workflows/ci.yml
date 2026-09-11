@@ -98,3 +98,30 @@ jobs:
         run: npm test
       - name: Check required fields and cross-references
         run: npm run validate
+
+  stack-template-drift:
+    name: harness-stack mirror parity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Clone harness-stack (best effort)
+        continue-on-error: true
+        env:
+          # Compare against the matching branch (a structural change here
+          # usually lands with a companion PR on the same branch name);
+          # fall back to the default branch.
+          STACK_BRANCH: ${{ github.head_ref || github.ref_name }}
+          STACK_URL: https://github.com/exponen-agi/harness-stack.git
+        run: |
+          git clone --depth 1 --branch "$STACK_BRANCH" "$STACK_URL" "$RUNNER_TEMP/harness-stack" \
+            || git clone --depth 1 "$STACK_URL" "$RUNNER_TEMP/harness-stack"
+
+      - name: Verify this repo matches harness-stack's templates/brain mirror
+        run: |
+          set -e
+          if [ ! -d "$RUNNER_TEMP/harness-stack" ]; then
+            echo "::notice::harness-stack not reachable from CI — skipping drift check. Run \`npm run verify:stack-template\` locally against a sibling checkout."
+            exit 0
+          fi
+          node scripts/check-stack-template-drift.mjs "$RUNNER_TEMP/harness-stack"

@@ -1,0 +1,8 @@
+# Normalize everything to LF in the git repo, regardless of what a
+# contributor's editor or OS checks out. This repo is plain Markdown read by
+# both humans and a content validator (scripts/validate-entries.mjs); that
+# validator already had to add a CRLF-normalization workaround for Windows
+# checkouts (see its "with CRLF line endings" tests) — this closes the gap at
+# the source instead of relying on every future text-processing script to
+# remember to normalize.
+* text=auto eol=lf
