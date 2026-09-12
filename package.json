@@ -9,6 +9,7 @@
   },
   "scripts": {
     "validate": "node scripts/validate-entries.mjs",
+    "verify:stack-template": "node scripts/check-stack-template-drift.mjs",
     "test": "node --test scripts/*.test.mjs"
   }
 }

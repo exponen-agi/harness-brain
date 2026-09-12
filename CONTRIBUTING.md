@@ -14,10 +14,10 @@ and following the existing format.
 - **Fix or clarify the docs** — `README.md`, or the entry-format templates in
   `_templates/`.
 - **Report confusion.** If you tried to set this up and got stuck, that's a
-  useful issue on its own — [open one](https://github.com/cloudbloqavi/harness-brain/issues).
+  useful issue on its own — [open one](https://github.com/exponen-agi/harness-brain/issues).
 - **Improve the writer/reader agents** — `commit-brain-agent` and
   `cross-repo-discovery-agent` are implemented in the
-  [harness-stack](https://github.com/cloudbloqavi/harness-stack) repo, not
+  [harness-stack](https://github.com/exponen-agi/harness-stack) repo, not
   here; contributions to their behaviour belong there.
 
 ## Setup
@@ -25,7 +25,7 @@ and following the existing format.
 No build step, no dependencies — it's Markdown:
 
 ```bash
-git clone https://github.com/cloudbloqavi/harness-brain.git
+git clone https://github.com/exponen-agi/harness-brain.git
 cd harness-brain
 ```
 
@@ -92,7 +92,7 @@ use clearly **fictional** project/company names and commit hashes.
 
 ## Keeping harness-stack in sync
 
-[harness-stack](https://github.com/cloudbloqavi/harness-stack) ships an
+[harness-stack](https://github.com/exponen-agi/harness-stack) ships an
 offline copy of this repo's `README.md`, `_templates/`, and `projects/` under
 `templates/brain/`, and its CI enforces that the two stay **byte-identical**
 (`npm run verify:brain-template` there). If your PR here changes any of those
@@ -100,6 +100,19 @@ three, please also open a matching PR on harness-stack copying the same files
 into `templates/brain/` — otherwise that CI check will fail once both repos'
 `main` branches are compared. A pure docs typo fix that doesn't touch
 `README.md`/`_templates/`/`projects/` doesn't need a companion PR.
+
+This repo also runs the **same comparison in reverse**, so drift is caught
+here even if harness-stack's own CI doesn't happen to run against your
+change first:
+
+```bash
+npm run verify:stack-template   # needs a sibling ../harness-stack checkout,
+                                 # or set HARNESS_STACK_DIR
+```
+
+CI runs this automatically on every PR too (best-effort — it clones
+harness-stack over the network, and skips with a notice rather than failing
+if that clone isn't reachable).
 
 ## Commit & PR style
 
@@ -110,5 +123,5 @@ into `templates/brain/` — otherwise that CI check will fail once both repos'
 
 ## Questions
 
-Open a [GitHub issue](https://github.com/cloudbloqavi/harness-brain/issues) —
+Open a [GitHub issue](https://github.com/exponen-agi/harness-brain/issues) —
 no question is too small.
