@@ -32,7 +32,7 @@ cd harness-brain
 Before opening a PR that touches `projects/`, check your entry is well-formed
 with the validation script (plain Node, no install needed — works the same on
 Linux, macOS, and Windows as long as you have
-[Node.js](https://nodejs.org) 18+ on your `PATH`):
+[Node.js](https://nodejs.org) 22+ on your `PATH`):
 
 ```bash
 npm run validate
