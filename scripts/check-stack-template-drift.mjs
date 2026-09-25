@@ -44,8 +44,9 @@ async function exists(p) {
 }
 
 /** Recursively list files under `base`, limited to `roots`, as paths
- *  relative to `base`. */
-async function listTracked(base, roots) {
+ *  relative to `base`. Exported so the walk itself is unit-testable against
+ *  disposable temp directories, without a live sibling checkout. */
+export async function listTracked(base, roots) {
   const out = [];
   async function walk(rel) {
     const abs = path.join(base, rel);
@@ -62,6 +63,29 @@ async function listTracked(base, roots) {
     if (await exists(path.join(base, top))) await walk(top);
   }
   return out.sort();
+}
+
+/**
+ * Byte-for-byte compare each `common` path between two roots. Exported (same
+ * reason as `listTracked`) so the content-drift half of the check — the other
+ * half of what `main()` reports — also runs against disposable temp
+ * directories instead of only ever being exercised via a live CI clone.
+ *
+ * @param {string} baseA
+ * @param {string} baseB
+ * @param {readonly string[]} commonPaths relative paths present under both
+ * @returns {Promise<string[]>} the subset of commonPaths whose content differs
+ */
+export async function computeContentDrift(baseA, baseB, commonPaths) {
+  const drifted = [];
+  for (const rel of commonPaths) {
+    const [a, b] = await Promise.all([
+      fs.readFile(path.join(baseA, rel), "utf8"),
+      fs.readFile(path.join(baseB, rel), "utf8"),
+    ]);
+    if (a !== b) drifted.push(rel);
+  }
+  return drifted;
 }
 
 /**
@@ -107,14 +131,7 @@ async function main() {
     mirrorFiles,
   );
 
-  const contentDrift = [];
-  for (const rel of common) {
-    const [a, b] = await Promise.all([
-      fs.readFile(path.join(root, rel), "utf8"),
-      fs.readFile(path.join(mirrorDir, rel), "utf8"),
-    ]);
-    if (a !== b) contentDrift.push(rel);
-  }
+  const contentDrift = await computeContentDrift(root, mirrorDir, common);
 
   const problems = missingFromMirror.length + extraInMirror.length + contentDrift.length;
 
