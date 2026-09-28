@@ -5,6 +5,14 @@ All notable changes to harness-brain are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Unit tests for `scripts/check-stack-template-drift.mjs`'s file-walk
+  (`listTracked`) and content-comparison (`computeContentDrift`) logic,
+  against disposable temp directories. Previously only `diffFileLists` had
+  offline coverage; the rest of the drift check was exercised only via a live
+  clone of the sibling repo in CI.
+
 ### Changed
 
 - Raised the minimum supported Node.js version from 18 to 22, matching what
